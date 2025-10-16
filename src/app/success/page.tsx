@@ -1,8 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect } from 'react';
-import { useCart } from '@/context/CartContext';
 
 export default function SuccessPage() {
   // The cart context doesn't automatically clear, so we might need a function for it.

@@ -3,12 +3,9 @@ import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import EditSouvenirForm from '@/components/EditSouvenirForm';
 
-interface EditSouvenirPageProps {
-  params: { id: string };
-}
-
-export default async function EditSouvenirPage({ params }: EditSouvenirPageProps) {
-  const cookieStore = cookies();
+export default async function EditSouvenirPage({ params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
+  const cookieStore = await cookies();
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

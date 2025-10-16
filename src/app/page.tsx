@@ -14,7 +14,7 @@ interface Product {
 }
 
 export default async function HomePage() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

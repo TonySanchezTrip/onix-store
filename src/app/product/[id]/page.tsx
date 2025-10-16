@@ -6,13 +6,12 @@ import AddToCartButton from '@/components/AddToCartButton';
 
 // This is a dynamic page, so we need to define the props
 interface ProductPageProps {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
-  const cookieStore = cookies();
+export default async function ProductPage({ params: paramsPromise }: ProductPageProps) {
+  const params = await paramsPromise;
+  const cookieStore = await cookies();
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

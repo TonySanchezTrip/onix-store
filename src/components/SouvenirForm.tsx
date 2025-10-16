@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
 
 // Define a Souvenir type for type safety
 interface Souvenir {
@@ -15,10 +17,11 @@ export type SouvenirFormData = Omit<Souvenir, 'id'>;
 
 interface SouvenirFormProps {
   souvenir?: Souvenir | null;
-  onSave: (data: SouvenirFormData) => Promise<void>;
+  onSave?: (data: SouvenirFormData) => Promise<void>;
 }
 
 export default function SouvenirForm({ souvenir, onSave }: SouvenirFormProps) {
+  const router = useRouter();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [publicUrl, setPublicUrl] = useState('');
@@ -35,11 +38,27 @@ export default function SouvenirForm({ souvenir, onSave }: SouvenirFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await onSave({
+    const souvenirData = {
       name,
       description,
       public_url: publicUrl,
-    });
+    };
+    if (onSave) {
+      await onSave(souvenirData);
+    } else {
+      try {
+        const { error } = await supabase.from('souvenirs').insert(souvenirData);
+        if (error) {
+          throw error;
+        }
+        alert('Souvenir creado exitosamente!');
+        router.push('/admin/souvenirs');
+        router.refresh(); // Ensures the list is up-to-date
+      } catch (error) {
+        const err = error as Error;
+        alert(`Error creando el souvenir: ${err.message}`);
+      }
+    }
     setLoading(false);
   };
 
