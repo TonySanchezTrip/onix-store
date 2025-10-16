@@ -20,8 +20,17 @@ const LoginPrompt = () => (
   </div>
 );
 
+interface DigitalMemory {
+  id: number;
+  created_at: string;
+  user_id: string;
+  souvenir_id: number;
+  file_url: string;
+  file_type: 'image' | 'video' | 'audio' | 'note';
+}
+
 const PrivateMemories = ({ souvenir_id, user }: { souvenir_id: number, user: User }) => {
-  const [memories, setMemories] = useState<any[]>([]);
+  const [memories, setMemories] = useState<DigitalMemory[]>([]);
   const [loadingMemories, setLoadingMemories] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +51,7 @@ const PrivateMemories = ({ souvenir_id, user }: { souvenir_id: number, user: Use
         console.error('Error fetching memories:', error);
         setError('Could not fetch memories.');
       } else {
-        setMemories(data);
+        setMemories(data as DigitalMemory[]);
       }
       setLoadingMemories(false);
     };
@@ -70,20 +79,6 @@ const PrivateMemories = ({ souvenir_id, user }: { souvenir_id: number, user: Use
       setUploading(true);
       setError(null);
 
-      // --- START DEBUG LOGGING ---
-      console.log('Starting upload process...');
-      console.log('User object from component state:', user);
-
-      const { data: { user: currentUser } } = await supabase.auth.getUser();
-      console.log('User object fetched right before insert:', currentUser);
-
-      if (!user || !currentUser || user.id !== currentUser.id) {
-        console.error('User ID mismatch or user not found!');
-        throw new Error('Authentication error. Please log out and log back in.');
-      }
-      console.log(`Attempting to insert with user_id: ${user.id}`);
-      // --- END DEBUG LOGGING ---
-
       const fileName = `${Date.now()}-${selectedFile.name}`;
       const filePath = `${user.id}/${fileName}`;
 
@@ -108,7 +103,7 @@ const PrivateMemories = ({ souvenir_id, user }: { souvenir_id: number, user: Use
 
       if (insertError) throw insertError;
 
-      setMemories(prev => [newMemory, ...prev]);
+      setMemories(prev => [newMemory as DigitalMemory, ...prev]);
       setSelectedFile(null); // Reset file input
 
     } catch (error) {
@@ -146,7 +141,7 @@ const PrivateMemories = ({ souvenir_id, user }: { souvenir_id: number, user: Use
       {loadingMemories ? (
         <p>Loading your memories...</p>
       ) : memories.length === 0 ? (
-        <p className="text-center text-gray-500 py-8">You haven't added any memories yet.</p>
+        <p className="text-center text-gray-500 py-8">You haven&apos;t added any memories yet.</p>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {memories.map(memory => (
