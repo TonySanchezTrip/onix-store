@@ -1,0 +1,1 @@
+Integra Supabase en el proyecto. Crea una página de login en la ruta /login. Esta página debe tener un formulario para iniciar sesión con email/contraseña y un botón grande para 'Iniciar sesión con Google'. En la barra de navegación, si el usuario no está logueado, muestra un botón de 'Login'. Si está logueado, muestra su avatar (o inicial) y un botón de 'Logout'.

@@ -1,0 +1,1 @@
+Crea una página de checkout en la ruta /checkout. Esta página mostrará un resumen de los productos en el carrito y el total. Integra el checkout de Stripe. Al hacer clic en 'Pagar', se debe redirigir al portal de pago de Stripe para completar la transacción.
