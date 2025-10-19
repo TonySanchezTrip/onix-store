@@ -71,7 +71,7 @@ export default async function SouvenirPage({ params: paramsPromise }: SouvenirPa
           <div className="mb-12">
             <h2 className="text-3xl font-bold text-center mb-8 font-heading text-primary-wine">Galería</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {souvenir.image_urls.map((url, index) => (
+              {souvenir.image_urls.map((url: string, index: number) => (
                 <div key={index} className="relative aspect-w-1 aspect-h-1 rounded-lg overflow-hidden shadow-lg border-4 border-secondary-gold">
                   <Image
                     src={url}
