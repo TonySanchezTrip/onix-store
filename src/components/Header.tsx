@@ -72,14 +72,14 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-gray-800 text-white p-4 sticky top-0 z-50">
+    <header className="bg-primary-wine text-white p-4 sticky top-0 z-50">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-8">
-          <Link href="/" className="text-2xl font-bold">ONIX</Link>
+          <Link href="/" className="text-2xl font-bold font-heading text-secondary-gold">ONIX</Link>
 
           {/* NFC Dropdown */}
           <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-            <button className="hover:text-gray-300">NFC</button>
+            <button className="text-white hover:text-secondary-gold animate-pulse text-lg">NFC</button>
             <div className={`absolute left-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg ${isDropdownOpen ? 'block' : 'hidden'} z-50`}>
               <ul className="py-1">
                 {souvenirs.length > 0 ? (
@@ -99,12 +99,12 @@ export default function Header() {
         </div>
 
         <div className="flex items-center space-x-4">
-          <Link href="/cart" className="relative">
+          <Link href="/cart" className="relative text-white hover:text-secondary-gold">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
             {totalItems > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              <span className="absolute -top-2 -right-2 bg-secondary-gold text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                 {totalItems}
               </span>
             )}
@@ -113,14 +113,14 @@ export default function Header() {
           {user ? (
             <div className="flex items-center space-x-4">
               {isAdmin && (
-                <Link href="/admin/products" className="text-yellow-400 hover:text-yellow-200 font-bold">
+                <Link href="/admin/products" className="text-white hover:text-secondary-gold font-bold">
                   Admin Panel
                 </Link>
               )}
-              <p className="hidden sm:block">{user.email}</p>
+              <p className="hidden sm:block text-white">{user.email}</p>
               <button
                 onClick={handleLogout}
-                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                className="bg-primary-wine text-secondary-gold border border-secondary-gold hover:bg-secondary-gold hover:text-black font-bold py-2 px-4 rounded"
               >
                 Logout
               </button>
@@ -128,7 +128,7 @@ export default function Header() {
           ) : (
             <Link
               href="/login"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              className="bg-primary-wine text-secondary-gold border border-secondary-gold hover:bg-secondary-gold hover:text-black font-bold py-2 px-4 rounded"
             >
               Login
             </Link>

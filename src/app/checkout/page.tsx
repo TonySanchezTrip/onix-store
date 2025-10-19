@@ -46,28 +46,28 @@ export default function CheckoutPage() {
 
   return (
     <div className="container mx-auto max-w-2xl py-8">
-      <h1 className="text-3xl font-bold my-8 text-center">Checkout</h1>
+      <h1 className="text-3xl font-bold my-8 text-center font-heading text-primary-wine">Checkout</h1>
       {cartItems.length === 0 ? (
         <p className="text-center">Your cart is empty. Nothing to checkout.</p>
       ) : (
         <>
           <div className="bg-white shadow-md rounded-lg p-6 mb-8">
-            <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
+            <h2 className="text-2xl font-semibold mb-4 font-heading text-primary-wine">Order Summary</h2>
             {cartItems.map(item => (
               <div key={item.id} className="flex justify-between items-center border-b py-2">
                 <p>{item.name} (x{item.quantity})</p>
-                <p>${(item.price * item.quantity).toFixed(2)}</p>
+                <p className="text-secondary-gold">${(item.price * item.quantity).toFixed(2)}</p>
               </div>
             ))}
             <div className="flex justify-between items-center font-bold text-xl mt-4">
-              <p>Total</p>
-              <p>${totalPrice.toFixed(2)}</p>
+              <p className="font-heading text-primary-wine">Total</p>
+              <p className="text-secondary-gold">${totalPrice.toFixed(2)}</p>
             </div>
           </div>
           <button 
             onClick={handleCheckout} 
             disabled={loading}
-            className="w-full bg-green-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-600 disabled:bg-gray-400 transition-colors"
+            className="w-full bg-secondary-gold text-white font-bold py-3 px-6 rounded-lg hover:bg-opacity-80 disabled:bg-gray-400 transition-colors"
           >
             {loading ? 'Processing...' : `Pay $${totalPrice.toFixed(2)}`}
           </button>

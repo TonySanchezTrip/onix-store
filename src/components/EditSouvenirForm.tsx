@@ -9,6 +9,7 @@ interface Souvenir {
   name: string;
   description: string | null;
   public_url: string | null;
+  state: string | null;
 }
 
 interface EditSouvenirFormProps {

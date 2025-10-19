@@ -53,8 +53,11 @@ export default async function AdminLayout({
             <li className="mb-4">
               <Link href="/admin/products" className="hover:text-gray-300">Gestionar Productos</Link>
             </li>
-            <li>
+            <li className="mb-4">
               <Link href="/admin/souvenirs" className="hover:text-gray-300">Gestionar Souvenirs</Link>
+            </li>
+            <li>
+              <Link href="/admin/important-places" className="hover:text-gray-300">Gestionar Lugares Importantes</Link>
             </li>
           </ul>
         </nav>

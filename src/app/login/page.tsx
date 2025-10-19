@@ -26,13 +26,13 @@ export default function Login() {
         <div className="bg-white rounded-2xl shadow-2xl flex w-2/3 max-w-4xl">
           <div className="w-3/5 p-5">
             <div className="text-left font-bold">
-              <span className="text-green-500">ONIX</span>
+              <span className="text-primary-wine">ONIX</span>
             </div>
             <div className="py-10">
-              <h2 className="text-3xl font-bold text-green-500 mb-2">
+              <h2 className="text-3xl font-bold text-primary-wine mb-2 font-heading">
                 Sign in to Account
               </h2>
-              <div className="border-2 w-10 border-green-500 inline-block mb-2"></div>
+              <div className="border-2 w-10 border-primary-wine inline-block mb-2"></div>
               <div className="flex flex-col items-center">
                 <div className="bg-gray-100 w-64 p-2 flex items-center mb-3">
                   <input
@@ -56,22 +56,22 @@ export default function Login() {
                 </div>
                 <button
                   onClick={handleLogin}
-                  className="border-2 border-green-500 text-green-500 rounded-full px-12 py-2 inline-block font-semibold hover:bg-green-500 hover:text-white"
+                  className="border-2 border-primary-wine text-primary-wine rounded-full px-12 py-2 inline-block font-semibold hover:bg-primary-wine hover:text-white"
                 >
                   Sign In
                 </button>
               </div>
             </div>
           </div>
-          <div className="w-2/5 bg-green-500 text-white rounded-tr-2xl rounded-br-2xl py-36 px-12">
-            <h2 className="text-3xl font-bold mb-2">Hello, Friend!</h2>
+          <div className="w-2/5 bg-primary-wine text-white rounded-tr-2xl rounded-br-2xl py-36 px-12">
+            <h2 className="text-3xl font-bold mb-2 font-heading">Hello, Friend!</h2>
             <div className="border-2 w-10 border-white inline-block mb-2"></div>
             <p className="mb-10">
               Fill up personal information and start journey with us.
             </p>
             <button
               onClick={handleGoogleLogin}
-              className="border-2 border-white rounded-full px-12 py-2 inline-block font-semibold hover:bg-white hover:text-green-500"
+              className="border-2 border-white rounded-full px-12 py-2 inline-block font-semibold hover:bg-white hover:text-primary-wine"
             >
               Login with Google
             </button>

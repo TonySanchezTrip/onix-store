@@ -41,22 +41,22 @@ export default async function HomePage() {
 
   return (
     <div>
-      <h1 className="text-4xl font-bold text-center my-8">Welcome to ONIX Store</h1>
+      <h1 className="text-4xl font-bold text-center my-8 font-heading text-primary-wine">Welcome to ONIX Store</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 p-4">
         {products.map((product: Product) => (
           <Link href={`/product/${product.id}`} key={product.id}>
-            <div className="border rounded-lg p-4 flex flex-col h-full cursor-pointer hover:shadow-lg transition-shadow">
+            <div className="border rounded-lg p-4 flex flex-col h-full cursor-pointer hover:shadow-lg transition-shadow bg-white">
               <img 
                 src={product.image_url || 'https://via.placeholder.com/150'} 
                 alt={`Image of ${product.name}`} 
                 className="w-full h-48 object-cover mb-4 rounded" 
               />
               <div className="flex-grow">
-                <h2 className="text-lg font-semibold">{product.name}</h2>
+                <h2 className="text-lg font-semibold font-heading text-primary-wine">{product.name}</h2>
                 <p className="text-gray-500 text-sm mb-2">{product.description}</p>
               </div>
               <div className="text-right">
-                <p className="text-xl font-bold">${product.price.toFixed(2)}</p>
+                <p className="text-xl font-bold text-secondary-gold">${product.price.toFixed(2)}</p>
               </div>
             </div>
           </Link>
