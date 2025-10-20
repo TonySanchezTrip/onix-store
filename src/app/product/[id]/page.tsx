@@ -1,8 +1,10 @@
+import Image from 'next/image';
+
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import React from 'react';
-import AddToCartButton from '@/components/AddToCartButton';
+import ProductDetails from '@/components/ProductDetails';
 
 // This is a dynamic page, so we need to define the props
 interface ProductPageProps {
@@ -40,18 +42,15 @@ export default async function ProductPage({ params: paramsPromise }: ProductPage
     <div className="container mx-auto p-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
-          <img 
+          <Image 
             src={product.image_url || 'https://via.placeholder.com/500'} 
             alt={`Image of ${product.name}`} 
+            width={500}
+            height={500}
             className="w-full rounded-lg shadow-lg"
           />
         </div>
-        <div className="flex flex-col justify-center">
-          <h1 className="text-4xl font-bold mb-4">{product.name}</h1>
-          <p className="text-gray-600 mb-6">{product.description}</p>
-          <p className="text-3xl font-semibold text-gray-800 mb-6">${product.price.toFixed(2)}</p>
-          <AddToCartButton product={product} />
-        </div>
+        <ProductDetails product={product} />
       </div>
     </div>
   );

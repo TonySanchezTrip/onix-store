@@ -1,8 +1,5 @@
 'use client';
 
-import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { Icon } from 'leaflet';
 import Image from 'next/image';
 
 interface ImportantPlace {
@@ -10,7 +7,7 @@ interface ImportantPlace {
   name: string;
   description: string;
   image_url: string;
-  location: { x: number; y: number };
+  location: string;
 }
 
 interface ImportantPlacesProps {
@@ -22,12 +19,25 @@ const ImportantPlaces = ({ places }: ImportantPlacesProps) => {
     return null;
   }
 
-  const customIcon = new Icon({
-    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-  });
+  const getEmbedUrl = (url: string) => {
+    if (!url) return null;
+    try {
+      const urlObj = new URL(url);
+      if (urlObj.hostname.includes('google.com') && urlObj.pathname.includes('/maps/')) {
+        if (urlObj.pathname.includes('/place/')) {
+          const place = urlObj.pathname.split('/place/')[1].split('/')[0];
+          return `https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&q=${place}`;
+        } else if (urlObj.searchParams.has('q')) {
+          const query = urlObj.searchParams.get('q');
+          return `https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&q=${query}`;
+        }
+      }
+    } catch (error) {
+      console.error("Invalid URL for Google Maps", error);
+      return null;
+    }
+    return null;
+  };
 
   return (
     <div className="mt-12">
@@ -52,17 +62,16 @@ const ImportantPlaces = ({ places }: ImportantPlacesProps) => {
           ))}
         </div>
         <div className="h-96 md:h-full rounded-lg overflow-hidden shadow-lg">
-          <MapContainer center={[places[0].location.y, places[0].location.x]} zoom={13} style={{ height: '100%', width: '100%' }}>
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
-            {places.map((place) => (
-              <Marker key={place.id} position={[place.location.y, place.location.x]} icon={customIcon}>
-                <Popup>{place.name}</Popup>
-              </Marker>
-            ))}
-          </MapContainer>
+          {places[0].location && (
+            <iframe
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              loading="lazy"
+              allowFullScreen
+              src={getEmbedUrl(places[0].location)!}
+            ></iframe>
+          )}
         </div>
       </div>
     </div>

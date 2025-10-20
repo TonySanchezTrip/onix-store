@@ -57,7 +57,7 @@ export default async function AdminLayout({
               <Link href="/admin/souvenirs" className="hover:text-gray-300">Gestionar Souvenirs</Link>
             </li>
             <li>
-              <Link href="/admin/important-places" className="hover:text-gray-300">Gestionar Lugares Importantes</Link>
+              <Link href="/admin/locations" className="hover:text-gray-300">Gestionar Lugares Importantes</Link>
             </li>
           </ul>
         </nav>

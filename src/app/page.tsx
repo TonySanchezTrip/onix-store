@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
@@ -46,9 +48,11 @@ export default async function HomePage() {
         {products.map((product: Product) => (
           <Link href={`/product/${product.id}`} key={product.id}>
             <div className="border rounded-lg p-4 flex flex-col h-full cursor-pointer hover:shadow-lg transition-shadow bg-white">
-              <img 
+              <Image 
                 src={product.image_url || 'https://via.placeholder.com/150'} 
                 alt={`Image of ${product.name}`} 
+                width={150}
+                height={150}
                 className="w-full h-48 object-cover mb-4 rounded" 
               />
               <div className="flex-grow">

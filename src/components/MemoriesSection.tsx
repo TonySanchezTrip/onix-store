@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
@@ -147,7 +148,7 @@ const PrivateMemories = ({ souvenir_id, user }: { souvenir_id: number, user: Use
           {memories.map(memory => (
             <div key={memory.id} className="border rounded-lg overflow-hidden shadow-lg group relative">
               {memory.file_type === 'image' ? (
-                <img src={memory.file_url} alt="Digital Memory" className="w-full h-48 object-cover" />
+                <Image src={memory.file_url} alt="Digital Memory" width={200} height={200} className="w-full h-48 object-cover" />
               ) : memory.file_type === 'video' ? (
                 <video src={memory.file_url} controls className="w-full h-48 object-cover bg-black" />
               ) : (

@@ -10,6 +10,7 @@ interface Souvenir {
   description: string | null;
   public_url: string | null;
   state: string | null;
+  representative_image_urls: string[] | null;
 }
 
 interface EditSouvenirFormProps {

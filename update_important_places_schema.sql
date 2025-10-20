@@ -1,0 +1,1 @@
+ALTER TABLE public.important_places ALTER COLUMN location TYPE text;

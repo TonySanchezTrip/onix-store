@@ -11,6 +11,7 @@ interface Souvenir {
   description: string | null;
   public_url: string | null;
   state: string | null;
+  representative_image_urls: string[] | null;
 }
 
 // The data that the form will work with
@@ -27,6 +28,7 @@ export default function SouvenirForm({ souvenir, onSave }: SouvenirFormProps) {
   const [description, setDescription] = useState('');
   const [publicUrl, setPublicUrl] = useState('');
   const [state, setState] = useState('');
+  const [representativeImageUrls, setRepresentativeImageUrls] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -35,6 +37,7 @@ export default function SouvenirForm({ souvenir, onSave }: SouvenirFormProps) {
       setDescription(souvenir.description || '');
       setPublicUrl(souvenir.public_url || '');
       setState(souvenir.state || '');
+      setRepresentativeImageUrls((souvenir.representative_image_urls || []).join('\n'));
     }
   }, [souvenir]);
 
@@ -46,6 +49,7 @@ export default function SouvenirForm({ souvenir, onSave }: SouvenirFormProps) {
       description,
       public_url: publicUrl,
       state,
+      representative_image_urls: representativeImageUrls.split('\n').filter(url => url.trim() !== ''),
     };
     if (onSave) {
       await onSave(souvenirData);
@@ -106,6 +110,16 @@ export default function SouvenirForm({ souvenir, onSave }: SouvenirFormProps) {
           id="state"
           value={state}
           onChange={(e) => setState(e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+        />
+      </div>
+      <div>
+        <label htmlFor="representativeImageUrls" className="block text-sm font-medium text-gray-700">URLs de Imágenes Representativas (una por línea)</label>
+        <textarea
+          id="representativeImageUrls"
+          value={representativeImageUrls}
+          onChange={(e) => setRepresentativeImageUrls(e.target.value)}
+          rows={4}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
         />
       </div>
