@@ -20,7 +20,7 @@ export default async function EditSouvenirPage({ params: paramsPromise }: { para
 
   const { data: souvenir, error } = await supabase
     .from('souvenirs')
-    .select('*')
+    .select('*, souvenir_locations(location_id)')
     .eq('id', params.id)
     .single();
 

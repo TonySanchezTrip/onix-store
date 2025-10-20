@@ -17,9 +17,14 @@ interface Souvenir {
 // The data that the form will work with
 export type SouvenirFormData = Omit<Souvenir, 'id'>;
 
+interface Location {
+  id: string;
+  name: string;
+}
+
 interface SouvenirFormProps {
-  souvenir?: Souvenir | null;
-  onSave?: (data: SouvenirFormData) => Promise<void>;
+  souvenir?: Souvenir & { souvenir_locations?: { location_id: string }[] };
+  onSave?: (data: SouvenirFormData, selectedLocations: string[], newImageUrls: string[]) => Promise<void>;
 }
 
 export default function SouvenirForm({ souvenir, onSave }: SouvenirFormProps) {
@@ -28,40 +33,79 @@ export default function SouvenirForm({ souvenir, onSave }: SouvenirFormProps) {
   const [description, setDescription] = useState('');
   const [publicUrl, setPublicUrl] = useState('');
   const [state, setState] = useState('');
-  const [representativeImageUrls, setRepresentativeImageUrls] = useState('');
+  const [representativeImageUrls, setRepresentativeImageUrls] = useState<string[]>([]);
+  const [newImages, setNewImages] = useState<File[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    const fetchLocations = async () => {
+      const { data } = await supabase.from('important_locations').select('id, name');
+      if (data) {
+        setLocations(data);
+      }
+    };
+
+    fetchLocations();
+
     if (souvenir) {
       setName(souvenir.name);
       setDescription(souvenir.description || '');
       setPublicUrl(souvenir.public_url || '');
       setState(souvenir.state || '');
-      setRepresentativeImageUrls((souvenir.representative_image_urls || []).join('\n'));
+      setRepresentativeImageUrls(souvenir.representative_image_urls || []);
+      setSelectedLocations((souvenir.souvenir_locations || []).map(l => l.location_id));
     }
   }, [souvenir]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setNewImages(Array.from(e.target.files));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    const newImageUrls: string[] = [];
+    for (const image of newImages) {
+      const fileName = `${Date.now()}-${image.name}`;
+      const { error } = await supabase.storage.from('representative-images').upload(fileName, image);
+      if (error) {
+        alert(`Error uploading image: ${error.message}`);
+        setLoading(false);
+        return;
+      }
+      const { data: { publicUrl } } = supabase.storage.from('representative-images').getPublicUrl(fileName);
+      newImageUrls.push(publicUrl);
+    }
+
     const souvenirData = {
       name,
       description,
       public_url: publicUrl,
       state,
-      representative_image_urls: representativeImageUrls.split('\n').filter(url => url.trim() !== ''),
+      representative_image_urls: [...representativeImageUrls, ...newImageUrls],
     };
+
     if (onSave) {
-      await onSave(souvenirData);
+      await onSave(souvenirData, selectedLocations, newImageUrls);
     } else {
       try {
-        const { error } = await supabase.from('souvenirs').insert(souvenirData);
-        if (error) {
-          throw error;
+        const { data: newSouvenir, error } = await supabase.from('souvenirs').insert(souvenirData).select().single();
+        if (error) throw error;
+
+        if (newSouvenir) {
+          const souvenirLocations = selectedLocations.map(location_id => ({ souvenir_id: newSouvenir.id, location_id }));
+          const { error: slError } = await supabase.from('souvenir_locations').insert(souvenirLocations);
+          if (slError) throw slError;
         }
+
         alert('Souvenir creado exitosamente!');
         router.push('/admin/souvenirs');
-        router.refresh(); // Ensures the list is up-to-date
+        router.refresh();
       } catch (error) {
         const err = error as Error;
         alert(`Error creando el souvenir: ${err.message}`);
@@ -114,14 +158,38 @@ export default function SouvenirForm({ souvenir, onSave }: SouvenirFormProps) {
         />
       </div>
       <div>
-        <label htmlFor="representativeImageUrls" className="block text-sm font-medium text-gray-700">URLs de Imágenes Representativas (una por línea)</label>
-        <textarea
-          id="representativeImageUrls"
-          value={representativeImageUrls}
-          onChange={(e) => setRepresentativeImageUrls(e.target.value)}
-          rows={4}
+        <label htmlFor="images" className="block text-sm font-medium text-gray-700">Imágenes Representativas</label>
+        <input
+          type="file"
+          id="images"
+          multiple
+          onChange={handleImageChange}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
         />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Lugares Importantes</label>
+        <div className="mt-2 space-y-2">
+          {locations.map(location => (
+            <div key={location.id} className="flex items-center">
+              <input
+                id={`location-${location.id}`}
+                type="checkbox"
+                value={location.id}
+                checked={selectedLocations.includes(location.id)}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setSelectedLocations([...selectedLocations, location.id]);
+                  } else {
+                    setSelectedLocations(selectedLocations.filter(id => id !== location.id));
+                  }
+                }}
+                className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+              />
+              <label htmlFor={`location-${location.id}`} className="ml-2 block text-sm text-gray-900">{location.name}</label>
+            </div>
+          ))}
+        </div>
       </div>
       <div>
         <button

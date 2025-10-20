@@ -5,8 +5,20 @@ import React from 'react';
 import MemoriesSection from '@/components/MemoriesSection';
 import Carousel from '@/components/Carousel';
 
+interface Location {
+  id: string;
+  name: string;
+  description: string;
+  address: string;
+  maps_url: string;
+}
+
 interface SouvenirPageProps {
   params: Promise<{ id: string }>;
+}
+
+interface SouvenirLocation {
+  important_locations: Location;
 }
 
 export default async function SouvenirPage({ params: paramsPromise }: SouvenirPageProps) {
@@ -26,7 +38,7 @@ export default async function SouvenirPage({ params: paramsPromise }: SouvenirPa
 
   const { data: souvenir, error } = await supabase
     .from('souvenirs')
-    .select('*, representative_image_urls')
+    .select('*, representative_image_urls, souvenir_locations!inner(important_locations(*))')
     .eq('id', params.id)
     .single();
 
@@ -34,13 +46,7 @@ export default async function SouvenirPage({ params: paramsPromise }: SouvenirPa
     notFound();
   }
 
-  const { data: locations, error: locationsError } = await supabase
-    .from('important_locations')
-    .select('*');
-
-  if (locationsError) {
-    console.error('Error fetching locations:', locationsError);
-  }
+  const locations = souvenir.souvenir_locations.map((sl: SouvenirLocation) => sl.important_locations);
 
   return (
     <div className="bg-bg-light min-h-screen">
@@ -72,7 +78,7 @@ export default async function SouvenirPage({ params: paramsPromise }: SouvenirPa
           <div className="mt-12">
             <h2 className="text-3xl font-bold text-center mb-8 font-heading text-primary-wine">Lugares que debes visitar</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {locations.map((location) => (
+              {locations.map((location: Location) => (
                 <div key={location.id} className="bg-white p-6 rounded-lg shadow-lg border-2 border-secondary-gold">
                   <h3 className="text-2xl font-bold mb-2 font-heading text-primary-wine">{location.name}</h3>
                   <p className="text-text-dark mb-4">{location.description}</p>

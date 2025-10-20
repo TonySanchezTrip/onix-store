@@ -20,16 +20,38 @@ interface EditSouvenirFormProps {
 export default function EditSouvenirForm({ souvenir }: EditSouvenirFormProps) {
   const router = useRouter();
 
-  const handleSave = async (souvenirData: SouvenirFormData) => {
+  const handleSave = async (souvenirData: SouvenirFormData, selectedLocations: string[], newImageUrls: string[]) => {
     try {
-      const { error } = await supabase
+      // First, update the souvenir itself
+      const { error: souvenirError } = await supabase
         .from('souvenirs')
-        .update(souvenirData)
+        .update({ ...souvenirData, representative_image_urls: [...(souvenir.representative_image_urls || []), ...newImageUrls] })
         .eq('id', souvenir.id);
 
-      if (error) {
-        throw error;
+      if (souvenirError) throw souvenirError;
+
+      // Then, update the souvenir_locations associations
+      // 1. Delete existing associations
+      const { error: deleteError } = await supabase
+        .from('souvenir_locations')
+        .delete()
+        .eq('souvenir_id', souvenir.id);
+
+      if (deleteError) throw deleteError;
+
+      // 2. Insert new associations
+      if (selectedLocations.length > 0) {
+        const newAssociations = selectedLocations.map(location_id => ({
+          souvenir_id: souvenir.id,
+          location_id,
+        }));
+        const { error: insertError } = await supabase
+          .from('souvenir_locations')
+          .insert(newAssociations);
+
+        if (insertError) throw insertError;
       }
+
       alert('Souvenir actualizado exitosamente!');
       router.push('/admin/souvenirs');
       router.refresh();
