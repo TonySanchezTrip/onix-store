@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
@@ -75,7 +76,9 @@ export default function Header() {
     <header className="bg-primary-wine text-white p-4 sticky top-0 z-50">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-8">
-          <Link href="/" className="text-2xl font-bold font-heading text-secondary-gold">ONIX</Link>
+          <Link href="/">
+            <Image src="/logo.png" alt="ONIX Logo" width={100} height={50} />
+          </Link>
 
           {/* NFC Dropdown */}
           <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>

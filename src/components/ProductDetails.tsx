@@ -37,11 +37,10 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
       <p className="text-3xl font-semibold text-gray-800 mb-6">${product.price.toFixed(2)}</p>
       <div className="flex items-center space-x-4 mb-6">
         <AddToCartButton product={product} />
-        <button
-          onClick={handleDirectBuy}
-          className="bg-primary-wine text-white font-bold py-2 px-4 rounded-md hover:bg-opacity-80 transition-colors"
-        >
-          Comprar Ahora
+                  <button
+                    onClick={handleDirectBuy}
+                    className="bg-green-600 text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 transition-colors"
+                  >          Comprar Ahora
         </button>
       </div>
       <div className="flex items-center space-x-4">

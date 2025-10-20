@@ -34,9 +34,13 @@ export default async function SouvenirPage({ params: paramsPromise }: SouvenirPa
     notFound();
   }
 
-  const { data: locations } = await supabase
+  const { data: locations, error: locationsError } = await supabase
     .from('important_locations')
     .select('*');
+
+  if (locationsError) {
+    console.error('Error fetching locations:', locationsError);
+  }
 
   return (
     <div className="bg-bg-light min-h-screen">
@@ -46,9 +50,21 @@ export default async function SouvenirPage({ params: paramsPromise }: SouvenirPa
           <p className="text-lg text-text-dark max-w-3xl mx-auto">{souvenir.description}</p>
         </div>
 
-        {souvenir.representative_image_urls && souvenir.representative_image_urls.length > 0 && (
+        {souvenir.representative_image_urls && Array.isArray(souvenir.representative_image_urls) && souvenir.representative_image_urls.length > 0 && (
           <div className="mb-12">
             <Carousel images={souvenir.representative_image_urls} />
+          </div>
+        )}
+
+        {souvenir.public_url && (
+          <div className="aspect-w-16 aspect-h-9 mb-12 rounded-lg overflow-hidden shadow-2xl">
+            <iframe
+              src={souvenir.public_url}
+              title={`Experience for ${souvenir.name}`}
+              className="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
           </div>
         )}
 
