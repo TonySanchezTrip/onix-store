@@ -15,6 +15,18 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'www.entornoturistico.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'www.turismomexico.es',
+      },
+      {
+        protocol: 'https',
+        hostname: 'blogger.googleusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'webcamsdemexico.com',
+      },
     ],
   },
 };
