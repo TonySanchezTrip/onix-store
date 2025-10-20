@@ -38,7 +38,7 @@ export default async function SouvenirPage({ params: paramsPromise }: SouvenirPa
 
   const { data: souvenir, error } = await supabase
     .from('souvenirs')
-    .select('*, representative_image_urls, souvenir_locations!inner(important_locations(*))')
+    .select('*, representative_image_urls, souvenir_locations(important_locations(*))')
     .eq('id', params.id)
     .single();
 
@@ -46,7 +46,7 @@ export default async function SouvenirPage({ params: paramsPromise }: SouvenirPa
     notFound();
   }
 
-  const locations = souvenir.souvenir_locations.map((sl: SouvenirLocation) => sl.important_locations);
+  const locations = souvenir.souvenir_locations ? souvenir.souvenir_locations.map((sl: SouvenirLocation) => sl.important_locations) : [];
 
   return (
     <div className="bg-bg-light min-h-screen">
