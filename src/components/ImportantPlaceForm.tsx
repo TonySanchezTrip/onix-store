@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import { Icon } from 'leaflet';
+import { Icon, LatLng } from 'leaflet';
 
 interface ImportantPlace {
   id: number;
@@ -23,10 +23,14 @@ interface ImportantPlaceFormProps {
   onSave?: (data: ImportantPlaceFormData) => Promise<void>;
 }
 
-function LocationPicker({ onLocationSelect }) {
-  const [position, setPosition] = useState(null);
+interface LocationPickerProps {
+  onLocationSelect: (latlng: LatLng) => void;
+}
 
-  const map = useMapEvents({
+function LocationPicker({ onLocationSelect }: LocationPickerProps) {
+  const [position, setPosition] = useState<LatLng | null>(null);
+
+  useMapEvents({
     click(e) {
       setPosition(e.latlng);
       onLocationSelect(e.latlng);
@@ -61,7 +65,7 @@ export default function ImportantPlaceForm({ importantPlace, onSave }: Important
     }
   }, [importantPlace]);
 
-  const handleLocationSelect = (latlng) => {
+  const handleLocationSelect = (latlng: LatLng) => {
     setLatitude(latlng.lat);
     setLongitude(latlng.lng);
   };
