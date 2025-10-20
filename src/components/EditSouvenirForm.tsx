@@ -11,6 +11,7 @@ interface Souvenir {
   public_url: string | null;
   state: string | null;
   representative_image_urls: string[] | null;
+  user_id: string;
 }
 
 interface EditSouvenirFormProps {

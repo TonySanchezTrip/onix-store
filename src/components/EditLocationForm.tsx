@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 
 interface Location {
-  id: string;
+  id: number;
   name: string;
   description: string | null;
   address: string | null;
@@ -24,7 +24,7 @@ export default function EditLocationForm({ location }: EditLocationFormProps) {
       const { error } = await supabase
         .from('important_locations')
         .update(locationData)
-        .eq('id', location.id);
+        .eq('id', Number(location.id));
 
       if (error) {
         throw error;

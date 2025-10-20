@@ -21,7 +21,7 @@ export default async function EditLocationPage({ params: paramsPromise }: { para
   const { data: location, error } = await supabase
     .from('important_locations')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', Number(params.id))
     .single();
 
   if (error || !location) {

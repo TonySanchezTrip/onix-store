@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
+import { User } from '@supabase/supabase-js';
 
 // Define a Souvenir type for type safety
 interface Souvenir {
@@ -12,10 +13,11 @@ interface Souvenir {
   public_url: string | null;
   state: string | null;
   representative_image_urls: string[] | null;
+  user_id: string; // Add user_id to Souvenir interface
 }
 
 // The data that the form will work with
-export type SouvenirFormData = Omit<Souvenir, 'id'>;
+export type SouvenirFormData = Omit<Souvenir, 'id' | 'user_id'>;
 
 interface Location {
   id: string;
@@ -38,16 +40,22 @@ export default function SouvenirForm({ souvenir, onSave }: SouvenirFormProps) {
   const [locations, setLocations] = useState<Location[]>([]);
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const fetchLocations = async () => {
-      const { data } = await supabase.from('important_locations').select('id, name');
-      if (data) {
-        setLocations(data);
+    const fetchLocationsAndUser = async () => {
+      // Fetch locations
+      const { data: locationsData } = await supabase.from('important_locations').select('id, name');
+      if (locationsData) {
+        setLocations(locationsData);
       }
+
+      // Fetch current user
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUser(user);
     };
 
-    fetchLocations();
+    fetchLocationsAndUser();
 
     if (souvenir) {
       setName(souvenir.name);
@@ -69,6 +77,12 @@ export default function SouvenirForm({ souvenir, onSave }: SouvenirFormProps) {
     e.preventDefault();
     setLoading(true);
 
+    if (!currentUser) {
+      alert('You must be logged in to create a souvenir.');
+      setLoading(false);
+      return;
+    }
+
     const newImageUrls: string[] = [];
     for (const image of newImages) {
       const fileName = `${Date.now()}-${image.name}`;
@@ -88,6 +102,7 @@ export default function SouvenirForm({ souvenir, onSave }: SouvenirFormProps) {
       public_url: publicUrl,
       state,
       representative_image_urls: [...representativeImageUrls, ...newImageUrls],
+      user_id: currentUser.id, // Include user_id
     };
 
     if (onSave) {

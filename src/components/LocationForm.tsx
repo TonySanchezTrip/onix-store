@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 
 interface Location {
-  id: string;
+  id: number;
   name: string;
   description: string | null;
   address: string | null;
