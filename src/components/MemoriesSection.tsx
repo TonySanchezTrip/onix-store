@@ -158,7 +158,7 @@ const PrivateMemories = ({ souvenir_id, user, importantPlaces }: { souvenir_id: 
           pagination={{ clickable: true }}
           navigation={true}
           modules={[EffectCoverflow, Pagination, Navigation]}
-          className="w-full py-8" // Estilos para el contenedor de Swiper
+          className="w-full h-[300px] py-8" // Estilos para el contenedor de Swiper
         >
           {memories.map((memory) => (
             <SwiperSlide key={memory.id} className="w-[250px] h-[250px]">
