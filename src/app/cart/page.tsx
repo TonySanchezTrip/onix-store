@@ -28,7 +28,7 @@ export default function CartPage() {
         {cartItems.map(item => (
           <div key={item.id} className="flex items-center justify-between border-b pb-4">
             <div className="flex items-center">
-              <Image src={item.image_url || 'https://via.placeholder.com/100'} alt={item.name} width={80} height={80} className="w-20 h-20 object-cover rounded mr-4" />
+              <Image src={item.image_url || '/placeholder.svg'} alt={item.name} width={80} height={80} className="w-20 h-20 object-cover rounded mr-4" />
               <div>
                 <h2 className="text-xl font-semibold font-heading text-primary-wine">{item.name}</h2>
                 <p className="text-gray-500">Quantity: {item.quantity}</p>

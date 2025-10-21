@@ -39,7 +39,7 @@ const Carousel = ({ images }: CarouselProps) => {
       >
         {images.map((image, index) => (
           <div key={index} className="w-full flex-shrink-0 relative aspect-w-16 aspect-h-9">
-            <Image src={image} alt={`Slide ${index + 1}`} layout="fill" objectFit="cover" />
+            <img src={image} alt={`Slide ${index + 1}`} className="w-full h-full object-cover" />
           </div>
         ))}
       </div>

@@ -1,18 +1,21 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Product } from '@/types/product'; // I'll need to create this type definition
+import { Product } from '@/types/product';
+import { supabase } from '@/lib/supabase';
+import Image from 'next/image';
 
 interface ProductFormProps {
   product?: Product | null;
-  onSave: (product: Omit<Product, 'id' | 'created_at'>) => Promise<void>;
+  onSave: (product: Omit<Product, 'id' | 'created_at'> & { image_urls: string[] | null }) => Promise<void>;
 }
 
 export default function ProductForm({ product, onSave }: ProductFormProps) {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [newImages, setNewImages] = useState<File[]>([]);
+  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -20,18 +23,44 @@ export default function ProductForm({ product, onSave }: ProductFormProps) {
       setName(product.name);
       setPrice(String(product.price));
       setDescription(product.description || '');
-      setImageUrl(product.image_url || '');
+      setExistingImageUrls(product.image_urls || []);
     }
   }, [product]);
+
+  const handleNewImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setNewImages(Array.from(e.target.files));
+    }
+  };
+
+  const handleRemoveExistingImage = (urlToRemove: string) => {
+    setExistingImageUrls(existingImageUrls.filter(url => url !== urlToRemove));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    const uploadedImageUrls: string[] = [];
+    for (const image of newImages) {
+      const fileName = `${Date.now()}-${image.name}`;
+      const { error: uploadError } = await supabase.storage.from('products-bucket').upload(fileName, image);
+      if (uploadError) {
+        alert(`Error uploading image: ${uploadError.message}`);
+        setLoading(false);
+        return;
+      }
+      const { data: { publicUrl } } = supabase.storage.from('products-bucket').getPublicUrl(fileName);
+      uploadedImageUrls.push(publicUrl);
+    }
+
+    const allImageUrls = [...existingImageUrls, ...uploadedImageUrls];
+
     await onSave({
       name,
       price: parseFloat(price),
       description,
-      image_url: imageUrl,
+      image_urls: allImageUrls.length > 0 ? allImageUrls : null,
     });
     setLoading(false);
   };
@@ -72,14 +101,33 @@ export default function ProductForm({ product, onSave }: ProductFormProps) {
         />
       </div>
       <div>
-        <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700">URL de la Imagen</label>
+        <label htmlFor="newImages" className="block text-sm font-medium text-gray-700">Imágenes del Producto</label>
         <input
-          type="url"
-          id="imageUrl"
-          value={imageUrl}
-          onChange={(e) => setImageUrl(e.target.value)}
+          type="file"
+          id="newImages"
+          multiple
+          onChange={handleNewImageChange}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
         />
+        <div className="mt-2 flex flex-wrap gap-2">
+          {existingImageUrls.map((url, index) => (
+            <div key={url} className="relative w-24 h-24">
+              <Image src={url} alt={`Existing product image ${index + 1}`} fill style={{ objectFit: 'cover' }} className="rounded-md" />
+              <button
+                type="button"
+                onClick={() => handleRemoveExistingImage(url)}
+                className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 text-xs"
+              >
+                X
+              </button>
+            </div>
+          ))}
+          {newImages.map((image, index) => (
+            <div key={image.name + index} className="relative w-24 h-24">
+              <Image src={URL.createObjectURL(image)} alt={`New product image ${index + 1}`} fill style={{ objectFit: 'cover' }} className="rounded-md" />
+            </div>
+          ))}
+        </div>
       </div>
       <div>
         <button

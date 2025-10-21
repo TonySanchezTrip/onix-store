@@ -53,8 +53,8 @@ const ImportantPlaces = ({ places }: ImportantPlacesProps) => {
                   <Image
                     src={place.image_url}
                     alt={place.name}
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    style={{ objectFit: 'cover' }}
                   />
                 </div>
               )}

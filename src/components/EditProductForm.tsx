@@ -12,7 +12,7 @@ interface EditProductFormProps {
 export default function EditProductForm({ product }: EditProductFormProps) {
   const router = useRouter();
 
-  const handleSave = async (productData: Omit<Product, 'id' | 'created_at'>) => {
+  const handleSave = async (productData: Omit<Product, 'id' | 'created_at'> & { image_urls: string[] | null }) => {
     try {
       const { error } = await supabase
         .from('products')

@@ -77,7 +77,7 @@ export default function Header() {
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-8">
           <Link href="/">
-            <Image src="/logo.png" alt="ONIX Logo" width={100} height={50} />
+            <Image src="/logo.jpeg" alt="ONIX Logo" width={100} height={50} />
           </Link>
 
           {/* NFC Dropdown */}

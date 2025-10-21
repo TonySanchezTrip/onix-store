@@ -2,15 +2,7 @@
 
 import { useCart } from '@/context/CartContext';
 import React from 'react';
-
-// Define the type for a product that can be added to the cart
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  image_url: string | null;
-  description: string | null; // Adding description for completeness
-}
+import { Product } from '@/types/product';
 
 interface AddToCartButtonProps {
   product: Product;
@@ -20,14 +12,7 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
   const { addToCart } = useCart();
 
   const handleAddToCart = () => {
-    // We need to pass a simplified product object to addToCart if the context expects that
-    const productToAdd = {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image_url: product.image_url,
-    };
-    addToCart(productToAdd);
+    addToCart(product);
     // Optional: Show a confirmation message
     alert(`'${product.name}' has been added to the cart!`);
   };

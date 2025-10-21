@@ -11,6 +11,7 @@ interface Location {
   description: string;
   address: string;
   maps_url: string;
+  image_url: string;
 }
 
 interface SouvenirPageProps {
@@ -23,6 +24,7 @@ interface SouvenirLocation {
 
 export default async function SouvenirPage({ params: paramsPromise }: SouvenirPageProps) {
   const params = await paramsPromise;
+  console.log('Fetching souvenir for ID:', params.id);
   const cookieStore = await cookies();
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -38,9 +40,12 @@ export default async function SouvenirPage({ params: paramsPromise }: SouvenirPa
 
   const { data: souvenir, error } = await supabase
     .from('souvenirs')
-    .select('*, representative_image_urls, souvenir_locations(important_locations(*))')
+    .select('*, representative_image_urls, souvenir_locations(important_locations(*, image_url))')
     .eq('id', params.id)
     .single();
+
+  console.log('Souvenir data:', souvenir);
+  console.log('Supabase error:', error);
 
   if (error || !souvenir) {
     notFound();
@@ -77,22 +82,42 @@ export default async function SouvenirPage({ params: paramsPromise }: SouvenirPa
         {locations && locations.length > 0 && (
           <div className="mt-12">
             <h2 className="text-3xl font-bold text-center mb-8 font-heading text-primary-wine">Lugares que debes visitar</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {locations.map((location: Location) => (
-                <div key={location.id} className="bg-white p-6 rounded-lg shadow-lg border-2 border-secondary-gold">
-                  <h3 className="text-2xl font-bold mb-2 font-heading text-primary-wine">{location.name}</h3>
-                  <p className="text-text-dark mb-4">{location.description}</p>
-                  <p className="text-text-dark font-semibold mb-4">{location.address}</p>
-                  <a
-                    href={location.maps_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block bg-primary-wine text-white font-bold py-2 px-4 rounded-lg hover:bg-opacity-80 transition-colors border-2 border-secondary-gold"
-                  >
-                    Ver en Google Maps
-                  </a>
-                </div>
-              ))}
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white rounded-lg shadow-lg border-2 border-secondary-gold">
+                <thead>
+                  <tr>
+                    <th className="py-3 px-4 border-b-2 border-secondary-gold text-left text-lg font-semibold text-primary-wine">Imagen</th>
+                    <th className="py-3 px-4 border-b-2 border-secondary-gold text-left text-lg font-semibold text-primary-wine">Nombre</th>
+                    <th className="py-3 px-4 border-b-2 border-secondary-gold text-left text-lg font-semibold text-primary-wine">Descripción</th>
+                    <th className="py-3 px-4 border-b-2 border-secondary-gold text-left text-lg font-semibold text-primary-wine">Dirección</th>
+                    <th className="py-3 px-4 border-b-2 border-secondary-gold text-left text-lg font-semibold text-primary-wine">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {locations.map((location: Location) => (
+                    <tr key={location.id} className="hover:bg-gray-50">
+                      <td className="py-3 px-4 border-b border-gray-200">
+                        {location.image_url && (
+                          <img src={location.image_url} alt={location.name} className="w-24 h-24 object-cover rounded-md" />
+                        )}
+                      </td>
+                      <td className="py-3 px-4 border-b border-gray-200 text-text-dark font-medium">{location.name}</td>
+                      <td className="py-3 px-4 border-b border-gray-200 text-text-dark">{location.description}</td>
+                      <td className="py-3 px-4 border-b border-gray-200 text-text-dark">{location.address}</td>
+                      <td className="py-3 px-4 border-b border-gray-200">
+                        <a
+                          href={location.maps_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block bg-primary-wine text-white font-bold py-2 px-4 rounded-lg hover:bg-opacity-80 transition-colors border-2 border-secondary-gold"
+                        >
+                          Ir
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         )}

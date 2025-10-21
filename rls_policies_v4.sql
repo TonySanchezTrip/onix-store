@@ -10,7 +10,7 @@ DROP POLICY IF EXISTS "Authenticated users can delete their own souvenir_locatio
 DROP POLICY IF EXISTS "Souvenir_locations are visible to everyone" ON public.souvenir_locations;
 
 -- Policies for souvenirs table
-CREATE POLICY "Authenticated users can insert souvenirs" ON public.souvenirs FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Authenticated users can insert souvenirs" ON public.souvenirs FOR INSERT WITH CHECK (auth.uid() = user_id AND auth.role() = 'authenticated');
 CREATE POLICY "Authenticated users can update their own souvenirs" ON public.souvenirs FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "Authenticated users can delete their own souvenirs" ON public.souvenirs FOR DELETE USING (auth.uid() = user_id);
 CREATE POLICY "Souvenirs are visible to everyone" ON public.souvenirs FOR SELECT USING (true);

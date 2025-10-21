@@ -1,18 +1,12 @@
 'use client';
 
 import React, { createContext, useState, useContext, ReactNode } from 'react';
-
-// Define the shape of a product
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  image_url: string | null;
-}
+import { Product } from '@/types/product';
 
 // Define the shape of an item in the cart
 interface CartItem extends Product {
   quantity: number;
+  image_url: string | null; // Add image_url to CartItem
 }
 
 // Define the shape of the cart context
@@ -39,7 +33,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         );
       } else {
         // Otherwise, add the new product with quantity 1
-        return [...prevItems, { ...product, quantity: 1 }];
+        const cartItem: CartItem = {
+          ...product,
+          quantity: 1,
+          image_url: product.image_urls ? product.image_urls[0] : null, // Use the first image URL
+        };
+        return [...prevItems, cartItem];
       }
     });
   };

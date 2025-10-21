@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 export default function NewProductPage() {
   const router = useRouter();
 
-  const handleSave = async (productData: Omit<Product, 'id' | 'created_at'>) => {
+  const handleSave = async (productData: Omit<Product, 'id' | 'created_at'> & { image_urls: string[] | null }) => {
     try {
       const { error } = await supabase.from('products').insert(productData);
       if (error) {

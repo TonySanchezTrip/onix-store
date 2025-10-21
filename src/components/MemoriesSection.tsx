@@ -118,20 +118,20 @@ const PrivateMemories = ({ souvenir_id, user }: { souvenir_id: number, user: Use
 
   return (
     <div>
-      <h2 className="text-3xl font-bold mb-6">Your Private Memories</h2>
+      <h2 className="text-3xl font-bold mb-6 text-primary-wine">Your Private Memories</h2>
       
       {/* Upload Form */}
-      <form onSubmit={handleFormSubmit} className="mb-8 p-6 border-2 border-dashed rounded-lg bg-gray-50">
-        <h3 className="text-xl font-semibold mb-4">Add a New Memory</h3>
+      <form onSubmit={handleFormSubmit} className="mb-8 p-6 border-2 border-primary-wine rounded-lg bg-white shadow-md">
+        <h3 className="text-xl font-semibold mb-4 text-primary-wine">Add a New Memory</h3>
         <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
-          <label htmlFor="file-upload" className="cursor-pointer bg-white text-blue-600 font-semibold py-2 px-4 border border-blue-600 rounded-lg hover:bg-blue-50">
+          <label htmlFor="file-upload" className="cursor-pointer bg-secondary-gold text-black p-2 rounded-md transition-all duration-300 ease-in-out hover:scale-105 hover:bg-opacity-90">
             Choose File
           </label>
           <input id="file-upload" type="file" className="hidden" onChange={handleFileChange} disabled={uploading} />
           
           {selectedFile && <span className="text-gray-600 flex-grow">{selectedFile.name}</span>}
 
-          <button type="submit" disabled={uploading || !selectedFile} className="w-full sm:w-auto bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
+          <button type="submit" disabled={uploading || !selectedFile} className="w-full sm:w-auto bg-primary-wine text-white font-bold py-2 px-6 rounded-lg transition-all duration-300 ease-in-out hover:scale-105 hover:bg-opacity-90 hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed">
             {uploading ? 'Uploading...' : 'Upload'}
           </button>
         </div>
