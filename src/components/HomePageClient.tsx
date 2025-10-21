@@ -12,6 +12,22 @@ interface ProductCardProps {
 const ProductCard = ({ product }: ProductCardProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  const nextImage = (e: React.MouseEvent) => {
+    e.preventDefault(); // Evita que el Link se active al hacer clic en el botón
+    e.stopPropagation(); // Detiene la propagación del evento
+    setCurrentImageIndex((prevIndex) => 
+      (prevIndex + 1) % product.image_urls!.length
+    );
+  };
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex((prevIndex) => 
+      (prevIndex === 0 ? product.image_urls!.length - 1 : prevIndex - 1)
+    );
+  };
+
   useEffect(() => {
     if (product.image_urls && product.image_urls.length > 1) {
       const interval = setInterval(() => {
@@ -31,7 +47,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <Link href={`/product/${product.id}`} key={product.id}>
       <div className="border rounded-lg p-4 flex flex-col h-full cursor-pointer hover:shadow-lg transition-shadow bg-white">
-        <div className="relative w-full h-48 overflow-hidden mb-4 rounded">
+        <div className="relative w-full h-48 overflow-hidden mb-4 rounded group">
           <Image 
             src={imageUrlToDisplay} 
             alt={`Image of ${product.name}`} 
@@ -39,6 +55,22 @@ const ProductCard = ({ product }: ProductCardProps) => {
             style={{ objectFit: 'cover' }}
             className="transition-opacity duration-500 ease-in-out"
           />
+          {product.image_urls && product.image_urls.length > 1 && (
+            <>
+              <button 
+                onClick={prevImage}
+                className="absolute left-0 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full z-10 transition-opacity"
+              >
+                &lt;
+              </button>
+              <button 
+                onClick={nextImage}
+                className="absolute right-0 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full z-10 transition-opacity"
+              >
+                &gt;
+              </button>
+            </>
+          )}
         </div>
         <div className="flex-grow">
           <h2 className="text-lg font-semibold font-heading text-primary-wine">{product.name}</h2>

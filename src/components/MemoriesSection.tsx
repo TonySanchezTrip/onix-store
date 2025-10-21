@@ -6,6 +6,21 @@ import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { EffectCoverflow, Pagination, Navigation } from 'swiper/modules';
+
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+
+interface ImportantPlace {
+  id: number;
+  name: string;
+  description: string;
+  image_url: string;
+}
+
 interface MemoriesSectionProps {
   souvenir_id: number;
 }
@@ -30,12 +45,14 @@ interface DigitalMemory {
   file_type: 'image' | 'video' | 'audio' | 'note';
 }
 
-const PrivateMemories = ({ souvenir_id, user }: { souvenir_id: number, user: User }) => {
+const PrivateMemories = ({ souvenir_id, user, importantPlaces }: { souvenir_id: number, user: User, importantPlaces: ImportantPlace[] }) => {
   const [memories, setMemories] = useState<DigitalMemory[]>([]);
   const [loadingMemories, setLoadingMemories] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  console.log("Memories array:", memories);
 
   // Fetch existing memories
   useEffect(() => {
@@ -119,47 +136,70 @@ const PrivateMemories = ({ souvenir_id, user }: { souvenir_id: number, user: Use
   return (
     <div>
       <h2 className="text-3xl font-bold mb-6 text-primary-wine">Your Private Memories</h2>
-      
-      {/* Upload Form */}
-      <form onSubmit={handleFormSubmit} className="mb-8 p-6 border-2 border-primary-wine rounded-lg bg-white shadow-md">
-        <h3 className="text-xl font-semibold mb-4 text-primary-wine">Add a New Memory</h3>
-        <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
-          <label htmlFor="file-upload" className="cursor-pointer bg-secondary-gold text-black p-2 rounded-md transition-all duration-300 ease-in-out hover:scale-105 hover:bg-opacity-90">
-            Choose File
-          </label>
-          <input id="file-upload" type="file" className="hidden" onChange={handleFileChange} disabled={uploading} />
-          
-          {selectedFile && <span className="text-gray-600 flex-grow">{selectedFile.name}</span>}
 
-          <button type="submit" disabled={uploading || !selectedFile} className="w-full sm:w-auto bg-primary-wine text-white font-bold py-2 px-6 rounded-lg transition-all duration-300 ease-in-out hover:scale-105 hover:bg-opacity-90 hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed">
-            {uploading ? 'Uploading...' : 'Upload'}
-          </button>
-        </div>
-        {error && <p className="text-red-500 mt-4">{error}</p>}
-      </form>
-
-      {/* Memories Grid */}
+      {/* Memories Coverflow Carousel */}
       {loadingMemories ? (
         <p>Loading your memories...</p>
       ) : memories.length === 0 ? (
         <p className="text-center text-gray-500 py-8">You haven&apos;t added any memories yet.</p>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {memories.map(memory => (
-            <div key={memory.id} className="border rounded-lg overflow-hidden shadow-lg group relative">
+        <Swiper
+          effect={'coverflow'}
+          grabCursor={true}
+          centeredSlides={true}
+          slidesPerView={'auto'}
+          coverflowEffect={{
+            rotate: 50,
+            stretch: 0,
+            depth: 100,
+            modifier: 1,
+            slideShadows: true,
+          }}
+          pagination={{ clickable: true }}
+          navigation={true}
+          modules={[EffectCoverflow, Pagination, Navigation]}
+          className="w-full py-8" // Estilos para el contenedor de Swiper
+        >
+          {memories.map((memory) => (
+            <SwiperSlide key={memory.id} className="w-[250px] h-[250px]">
               {memory.file_type === 'image' ? (
-                <Image src={memory.file_url} alt="Digital Memory" width={200} height={200} className="w-full h-48 object-cover" />
-              ) : memory.file_type === 'video' ? (
-                <video src={memory.file_url} controls className="w-full h-48 object-cover bg-black" />
+                <Image
+                  src={memory.file_url}
+                  alt="Recuerdo digital"
+                  fill
+                  sizes="(max-width: 768px) 250px, 250px"
+                  style={{ objectFit: 'cover' }}
+                  className="rounded-lg shadow-xl shadow-black/40"
+                />
               ) : (
-                <div className="p-4 bg-gray-100 h-48 flex items-center justify-center">
-                  <p className="text-gray-500">Note/Other</p>
+                <div className="p-4 bg-gray-100 h-full flex items-center justify-center">
+                  <p className="text-gray-500">{memory.file_type === 'video' ? 'Video' : 'Note'}</p>
                 </div>
               )}
-            </div>
+            </SwiperSlide>
           ))}
-        </div>
+        </Swiper>
       )}
+
+      {/* Upload Form */}
+      <div className="w-full p-4">
+        <form onSubmit={handleFormSubmit} className="mb-8 p-6 border-2 border-primary-wine rounded-lg bg-white shadow-md">
+          <h3 className="text-xl font-semibold mb-4 text-primary-wine">Add a New Memory</h3>
+          <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <label htmlFor="file-upload" className="cursor-pointer bg-secondary-gold text-black p-2 rounded-md transition-all duration-300 ease-in-out hover:scale-105 hover:bg-opacity-90">
+              Choose File
+            </label>
+            <input id="file-upload" type="file" className="hidden" onChange={handleFileChange} disabled={uploading} />
+            
+            {selectedFile && <span className="text-gray-600 flex-grow">{selectedFile.name}</span>}
+
+            <button type="submit" disabled={uploading || !selectedFile} className="w-full sm:w-auto bg-primary-wine text-white font-bold py-2 px-6 rounded-lg transition-all duration-300 ease-in-out hover:scale-105 hover:opacity-90 hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed">
+              {uploading ? 'Uploading...' : 'Upload'}
+            </button>
+          </div>
+          {error && <p className="text-red-500 mt-4">{error}</p>}
+        </form>
+      </div>
     </div>
   );
 };
@@ -167,15 +207,39 @@ const PrivateMemories = ({ souvenir_id, user }: { souvenir_id: number, user: Use
 export default function MemoriesSection({ souvenir_id }: MemoriesSectionProps) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [importantPlaces, setImportantPlaces] = useState<ImportantPlace[]>([]);
 
   useEffect(() => {
-    const checkUser = async () => {
+    const fetchData = async () => {
+      // Fetch user
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
+
+      // Fetch important places associated with the souvenir
+      const { data: slData, error: slError } = await supabase
+        .from('souvenir_locations')
+        .select('location_id')
+        .eq('souvenir_id', souvenir_id);
+
+      if (slError) {
+        console.error('Error fetching souvenir locations:', slError);
+      } else if (slData && slData.length > 0) {
+        const locationIds = slData.map(sl => sl.location_id);
+        const { data: ipData, error: ipError } = await supabase
+          .from('important_locations')
+          .select('id, name, description, image_url')
+          .in('id', locationIds);
+
+        if (ipError) {
+          console.error('Error fetching important places:', ipError.message || ipError);
+        } else if (ipData) {
+          setImportantPlaces(ipData);
+        }
+      }
       setLoading(false);
     };
 
-    checkUser();
+    fetchData();
 
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
@@ -184,11 +248,11 @@ export default function MemoriesSection({ souvenir_id }: MemoriesSectionProps) {
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, []);
+  }, [souvenir_id]);
 
   if (loading) {
     return <p>Loading memories section...</p>;
   }
 
-  return user ? <PrivateMemories souvenir_id={souvenir_id} user={user} /> : <LoginPrompt />;
+  return user ? <PrivateMemories souvenir_id={souvenir_id} user={user} importantPlaces={importantPlaces} /> : <LoginPrompt />;
 }

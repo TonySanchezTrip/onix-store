@@ -39,7 +39,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
         <AddToCartButton product={product} />
                   <button
                     onClick={handleDirectBuy}
-                    className="bg-green-600 text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 transition-colors"
+                    className="bg-green-600 text-white font-bold py-2 px-4 rounded-md transition-all duration-300 ease-in-out hover:scale-105 hover:opacity-90 hover:shadow-lg"
                   >          Comprar Ahora
         </button>
       </div>

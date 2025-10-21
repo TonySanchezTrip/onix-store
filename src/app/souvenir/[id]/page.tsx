@@ -67,17 +67,9 @@ export default async function SouvenirPage({ params: paramsPromise }: SouvenirPa
           </div>
         )}
 
-        {souvenir.public_url && (
-          <div className="aspect-w-16 aspect-h-9 mb-12 rounded-lg overflow-hidden shadow-2xl">
-            <iframe
-              src={souvenir.public_url}
-              title={`Experience for ${souvenir.name}`}
-              className="w-full h-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-          </div>
-        )}
+        <div className="border-t-2 border-primary-wine pt-8 mt-12">
+          <MemoriesSection souvenir_id={souvenir.id} />
+        </div>
 
         {locations && locations.length > 0 && (
           <div className="mt-12">
@@ -122,9 +114,17 @@ export default async function SouvenirPage({ params: paramsPromise }: SouvenirPa
           </div>
         )}
 
-        <div className="border-t-2 border-primary-wine pt-8 mt-12">
-          <MemoriesSection souvenir_id={souvenir.id} />
-        </div>
+        {souvenir.public_url && (
+          <div className="aspect-w-16 aspect-h-9 mb-12 rounded-lg overflow-hidden shadow-2xl">
+            <iframe
+              src={souvenir.public_url}
+              title={`Experience for ${souvenir.name}`}
+              className="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        )}
       </div>
     </div>
   );
